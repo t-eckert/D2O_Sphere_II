@@ -67,6 +67,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   D2O->AddElement(elD,2);               // (element, n atoms)
   D2O->AddElement(elO,1);               // (element, n atoms)
 
+  // Def polyethylene
+  G4Material* polyethylene = NIST_Manager->FindOrBuildMaterial("G4_POLYETHYLENE");
+
   // World --------------------------------------------------------------------
   G4double world_size_XY = 10*cm;
   G4double world_size_Z = 200*cm;
@@ -78,7 +81,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     "Chamber",                          // name
     0.5*world_size_XY,                  // x length
     0.5*world_size_XY,                  // y length
-    0.5*world_size_Z,                   // z length
+    0.5*world_size_Z                   // z length
   );
 
   // Def logic for Chamber
@@ -87,4 +90,99 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     world_material,
     "Chamber"
   );
+
+  G4VisAttributes* World_Vis_Att = new G4VisAttributes(G4Colour(0.,1.,1.));
+  World_Vis_Att->SetForceWireframe(true);
+  logic_world->SetVisAttributes(World_Vis_Att);
+
+  G4VPhysicalVolume* phys_world = new G4PVPlacement(
+    0,                                  // rotation
+    G4ThreeVector(),                    // at (0,0,0)
+    logic_world,                         // logical volume
+    "Chamber",                          // name
+    0,                                  // mother volume
+    false,                              // no boolean operation
+    0,                                  // copy number
+    true                                // check overlaps
+  );
+  
+  // D2O Sphere ---------------------------------------------------------------
+
+  // Def materials and location of sphere
+  G4Material* material_D2O_sphere = D2O;
+  G4ThreeVector origin = G4ThreeVector(0,0,0);
+
+  // Def sphere geometry
+  G4double r_min=0.*cm, r_max=2.44*cm;
+  G4double phi_min=0., phi_max=twopi;
+  G4double theta_min=0., theta_max=pi;
+
+  // Def solid volume
+  G4Sphere* solid_D2O_sphere = new G4Sphere(
+    "D2O Sphere",                       // name    
+    r_min, r_max,                        // radius
+    phi_min, phi_max,                   // phi angle
+    theta_min, theta_max                // theta angle
+  );
+
+  // Def logical volume
+  G4LogicalVolume* logic_D2O_sphere = new G4LogicalVolume(
+    solid_D2O_sphere,                   // solid
+    material_D2O_sphere,                // heavy water
+    "D2O Sphere"                        // name
+  );
+
+  // Place the shape in space
+  new G4PVPlacement(
+    0,                                  // no rotation
+    origin,                             // location at origin
+    logic_D2O_sphere,                   // logical volume
+    "D2O Sphere",                       // name
+    logic_world,                        // mother volume
+    false,                              // overlapping structure
+    0,                                  // copy number
+    true                                // check for overlapping
+  );
+
+  // Scoring Volume -----------------------------------------------------------
+  
+  // Def materials and location of SV
+  G4Material* material_SV = polyethylene;
+  G4ThreeVector position_SV = G4ThreeVector(0,0,-80*cm);
+
+  // SV def as thin plane (10,10,0.01) cm
+  // Distances are given from halfpoint
+  G4double xy_SV = 5*cm, z_SV = 0.005*cm;
+  
+  // Def solid volume
+  G4Box* solid_SV = new G4Box(
+    "Scoring Volume",                   // name
+    xy_SV,                              // half x length
+    xy_SV,                              // half y length
+    z_SV                                // half z length
+  );
+
+  // Def logical volume
+  G4LogicalVolume* logic_SV = new G4LogicalVolume(
+    solid_SV,                           // solid
+    material_SV,                        // polyethylene
+    "Scoring Volume"                    // name
+  );
+
+  // Place the shape in space
+  new G4PVPlacement(
+    0,                                  // rotation
+    position_SV,                        // (0,0,-80) cm
+    logic_SV,                           // logical volume
+    "Scoring Volume",                   // name
+    logic_world,                        // mother volume
+    false,                              // overlapping structure
+    0,                                  // copy number
+    true                                // check overlapping
+  );
+  
+  // Def scoring volume
+  fScoringVolume = logic_SV;
+
+  return phys_world;
 }
