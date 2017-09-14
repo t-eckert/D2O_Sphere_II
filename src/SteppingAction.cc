@@ -13,18 +13,12 @@
 #include "G4VProcess.hh"
 #include "G4Track.hh"
 
+extern data[8][]
+
 SteppingAction::SteppingAction(EventAction* eventAction):
 G4UserSteppingAction(),
 fEventAction(eventAction),
-fScoringVolume(0),
-particle_name(0),
-process_name(0),
-in_det(0),
-track_ID(0),
-kinetic_energy(0),
-x_pos(0),
-y_pos(0),
-z_pos(0)
+fScoringVolume(0)
 {}
 
 SteppingAction::~SteppingAction()

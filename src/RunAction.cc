@@ -2,6 +2,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "DetectorConstruction.hh"
 #include "Analysis.hh"
+#include "G4HadronicProcessStore.hh"
 
 #include "G4RunManager.hh"
 #include "G4Run.hh"
@@ -10,6 +11,10 @@
 #include "G4LogicalVolume.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
+
+G4int n_events = run->GetNumberOfEvent();
+G4double data[8][n_events*20] = {0.0};  // 
+
 
 RunAction::RunAction():
 G4UserRunAction()
@@ -28,7 +33,7 @@ void RunAction::BeginOfRunAction(const G4Run*)
 
 void RunAction::EndOfRunAction(const G4Run* run)
 {
-    G4int n_events = run->GetNumberOfEvent();
+    // G4int n_events = run->GetNumberOfEvent();
     if(n_events==0) return;
 
     const PrimaryGeneratorAction* generatorAction 
@@ -43,6 +48,12 @@ void RunAction::EndOfRunAction(const G4Run* run)
         G4double particleEnergy = particleGun->GetParticleEnergy();
         runCondition += G4BestUnit(particleEnergy,"Energy");       
     }
+
+    // Print the nD breakup cross section
+    G4double nD_xc[] 
+    for(){}
+    
+    GetInelasticCrossSectionPerIsotope(const G4ParticleDefinition* aParticle, G4double 	kineticEnergy,1,2)	
 
     // Print
     //
