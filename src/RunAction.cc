@@ -12,8 +12,6 @@
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
 
-// G4double data[8][5000] = {0.0};  // 
-
 RunAction::RunAction():
 G4UserRunAction()
 {}

@@ -36,6 +36,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         fScoringVolume = detectorConstruction->GetScoringVolume();
     }
 
+    
     // Point to the track
     G4Track* track = step->GetTrack();
 
@@ -46,38 +47,27 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         // Get volume of the current step and check if we are in the scoring volume
         G4LogicalVolume* volume
         = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
-        G4double in_det = 0.0;
-        if(volume==fScoringVolume) in_det = 1.0;
 
-        G4String volume_name = volume->GetName();
+        if(volume==fScoringVolume){
+            G4String tag = "null";
+            //G4String process_name = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+            G4int trackID = track->GetTrackID();
+            G4int n_secondaries = step->GetNumberOfSecondariesInCurrentStep();
+            G4double kinetic_energy = track->GetKineticEnergy();
+            G4ThreeVector position = track->GetPosition();
+            G4double x_pos = position.x();
+            G4double y_pos = position.y();
+            G4double z_pos = position.z();
 
-        // Get the name of the process in the step
-        G4String process_name = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+            if(trackID==1){tag="no interaction";}
+            if(n_secondaries==3){tag="breakup neutron";}
+            // if(n_secondaries==)
 
-        // Get the step number
-        G4int step_number = track->GetCurrentStepNumber();
-
-        // Get the ID of the track 
-        G4int trackID = track->GetTrackID();
-
-        // Get the kinetic energy
-        G4double kinetic_energy = track->GetKineticEnergy();
-
-        // Get the position of the particle and separate it into x,y,z
-        G4ThreeVector position = track->GetPosition();
-        G4double x_pos = position.x();
-        G4double y_pos = position.y();
-        G4double z_pos = position.z();
-
-        G4cout  << "Out: "
-                << step_number      << ", "
-                << trackID          << ", "
-                << process_name     << ", "
-                << in_det           << ", "
-                << kinetic_energy   << ", " 
-                << x_pos            << ", "
-                << y_pos            << ", "
-                << z_pos            << ", "
-                << volume_name      << G4endl;
+            G4cout  << kinetic_energy << ", "
+                    << x_pos << ", "
+                    << y_pos << ", "
+                    << z_pos << ", "
+                    << tag << G4endl;
+        };
     }
 }
