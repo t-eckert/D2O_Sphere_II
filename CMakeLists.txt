@@ -49,6 +49,7 @@ set(D2O_Sphere_II_SCRIPTS
   init_vis.mac
   run.mac
   run_test.mac
+  run_test_single_thread.mac
   vis.mac
   )
 

@@ -13,8 +13,10 @@
 #include "G4VProcess.hh"
 #include "G4Track.hh"
 
-// extern G4double data[8][5000];
-// G4int i = 0;
+extern volatile G4double tag;
+extern volatile G4double x_int;
+extern volatile G4double y_int;
+extern volatile G4double z_int;
 
 SteppingAction::SteppingAction(EventAction* eventAction):
 G4UserSteppingAction(),
@@ -48,26 +50,44 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         G4LogicalVolume* volume
         = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
 
+        G4int trackID = track->GetTrackID();
+        G4int n_secondaries = step->GetNumberOfSecondariesInCurrentStep();
+        G4String process_name = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+
+        G4ThreeVector position = track->GetPosition();
+        G4double x_pos = position.x();
+        G4double y_pos = position.y();
+        G4double z_pos = position.z();
+
+        if(tag==0 && trackID!=1){
+            tag = -1;
+        }
+
+        if(process_name=="neutronInelastic" && n_secondaries==3){
+            tag=2;                      // breakup neutron
+            x_int=x_pos;
+            y_int=y_pos;
+            z_int=z_pos;
+        } 
+
+        if(process_name=="hadElastic"){
+            tag=1;                      // scattered neutron
+            x_int=x_pos;
+            y_int=y_pos;
+            z_int=z_pos;
+        }
+        G4cout << "tag: " << tag << G4endl;
         if(volume==fScoringVolume){
-            G4String tag = "null";
-            //G4String process_name = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
-            G4int trackID = track->GetTrackID();
-            G4int n_secondaries = step->GetNumberOfSecondariesInCurrentStep();
             G4double kinetic_energy = track->GetKineticEnergy();
-            G4ThreeVector position = track->GetPosition();
-            G4double x_pos = position.x();
-            G4double y_pos = position.y();
-            G4double z_pos = position.z();
 
-            if(trackID==1){tag="no interaction";}
-            if(n_secondaries==3){tag="breakup neutron";}
-            // if(n_secondaries==)
-
-            G4cout  << kinetic_energy << ", "
+            G4cout  << "Out: " << kinetic_energy << ", "
                     << x_pos << ", "
                     << y_pos << ", "
                     << z_pos << ", "
-                    << tag << G4endl;
+                    << tag   << ", "
+                    << x_int << ", "
+                    << y_int << ", "
+                    << z_int << G4endl;
         };
     }
 }

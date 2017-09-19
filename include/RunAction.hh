@@ -22,6 +22,9 @@ public:
     // virtual G4Run* GenerateRun();
     virtual void BeginOfRunAction(const G4Run*);
     virtual void   EndOfRunAction(const G4Run*);
+
+private:
+    RunAction* fRunAction;
 };
 
 #endif

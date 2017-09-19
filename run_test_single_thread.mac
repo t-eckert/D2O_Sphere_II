@@ -4,19 +4,19 @@
 # or interactively: Idle> /control/execute run_test1.mac
 #
 # Change the default number of workers (in multi-threading mode)
-/run/numberOfThreads 24
+/run/numberOfThreads 1
 #
 # Initialize kernel
 /run/initialize
 #
 /control/verbose 0
 /run/verbose 0
-/event/verbose 2
-/tracking/verbose 2
+/event/verbose 0
+/tracking/verbose 0
 #
 # 14.03 MeV neutrons in rand dir across hemisphere
 #
 /gun/particle neutron
 /gun/energy 14.03 MeV
 #
-/run/beamOn 100000
+/run/beamOn 1000000
