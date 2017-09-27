@@ -76,8 +76,8 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             y_int=y_pos;
             z_int=z_pos;
         }
-        G4cout << "tag: " << tag << G4endl;
-        if(volume==fScoringVolume){
+
+        if(volume==fScoringVolume && tag == 2){
             G4double kinetic_energy = track->GetKineticEnergy();
 
             G4cout  << "Out: " << kinetic_energy << ", "
